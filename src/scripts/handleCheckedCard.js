@@ -1,15 +1,18 @@
 export const handleCheckedCards = gameState => {
   // don't mutate your params
   const cardMap = new Map(gameState.cardMap);
+
   let ids = [];
   gameState.cardMap.forEach(card => {
     if (card.flipped && !card.checked) ids.push(card.id);
   });
 
   let success;
-  // the user picked the correct cards
+  // The good thing is that there can't be more than two cards that we need to check at a given time
+  // so we don't have any perf risk
   const firstPick = cardMap.get(ids[0]);
   const secondPick = cardMap.get(ids[1]);
+  // the user picked the correct cards
   if (firstPick.content === secondPick.content) {
     (success = true),
       cardMap

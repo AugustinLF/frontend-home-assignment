@@ -1,6 +1,9 @@
 const generateId = id => `card-${id}`;
 
-const createCardElement = (card, gameEngine, gameState) => {
+// it could be interesting of replacing this pattern of recreating the node from scratch by simple
+// DOM updates, and using event delegation to have a single event handler. It would also mean that
+// we wouldn't have to pass updateCard everywhere
+const createCardElement = (card, updateCard, gameState) => {
   const imgCard = document.createElement("img");
   imgCard.classList.add("card");
   if (!card.flipped) imgCard.classList.add("card-back");
@@ -13,18 +16,18 @@ const createCardElement = (card, gameEngine, gameState) => {
     imgCard.classList.add("card-checked");
   } else if (!gameState.waiting && !card.flipped) {
     imgCard.addEventListener("click", () => {
-      gameEngine.updateCard(card, gameState);
+      updateCard(card, gameState);
     });
   }
   return imgCard;
 };
 
-export const renderElements = (gameState, gameEngine) => {
+export const renderElements = (gameState, updateCard) => {
   gameState.cardList.forEach((cardId, index) => {
     const card = gameState.cardMap.get(cardId);
     document
       .getElementById(generateId(card.id))
-      .replaceWith(createCardElement(card, gameEngine, gameState));
+      .replaceWith(createCardElement(card, updateCard, gameState));
   });
   setCounter(gameState);
 };
@@ -33,14 +36,14 @@ const setCounter = gameState => {
   document.getElementById("counter").innerHTML = gameState.tries;
 };
 
-export const boot = (gameState, gameEngine) => {
+export const boot = (gameState, updateCard) => {
   const root = document.getElementById("root");
   root.innerHTML = "";
 
   gameState.cardList.forEach(card => {
     const imgCard = createCardElement(
       gameState.cardMap.get(card),
-      gameEngine,
+      updateCard,
       gameState
     );
     setCounter(gameState);
