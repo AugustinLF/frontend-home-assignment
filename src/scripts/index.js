@@ -45,7 +45,6 @@ const gameEngine = {
       if (element.flipped && !element.checked) cardsCurrentlyRevealed++;
     }
 
-    console.log({ cardsCurrentlyRevealed }, gameState.cardMap);
     if (cardsCurrentlyRevealed === 2) {
       // Can't flip more than two cards at the same time
       return;
@@ -58,7 +57,6 @@ const gameEngine = {
       if (success) {
         gameState.cardMap = updatedCardMap;
       } else {
-        console.log("here");
         gameState.waiting = true;
         setTimeout(() => {
           const newGameState = Object.assign({}, gameState, {
@@ -66,7 +64,7 @@ const gameEngine = {
             cardMap: updatedCardMap
           });
           renderElements(newGameState, gameEngine);
-        }, 1000);
+        }, 300);
       }
     }
 

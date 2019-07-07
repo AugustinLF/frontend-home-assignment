@@ -11,7 +11,7 @@ const createCardElement = (card, gameEngine, gameState) => {
 
   if (card.checked) {
     imgCard.classList.add("card-checked");
-  } else if (!gameState.waiting) {
+  } else if (!gameState.waiting && !card.flipped) {
     imgCard.addEventListener("click", () => {
       gameEngine.updateCard(card, gameState);
     });
