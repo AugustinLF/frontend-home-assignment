@@ -1,6 +1,6 @@
 const generateId = id => `card-${id}`;
 
-const createCardElement = (card, gameEngine) => {
+const createCardElement = (card, gameEngine, gameState) => {
   const imgCard = document.createElement("img");
   imgCard.classList.add("card");
   if (!card.flipped) imgCard.classList.add("card-back");
@@ -9,39 +9,34 @@ const createCardElement = (card, gameEngine) => {
     ? `http://localhost:8111/png/${card.content}/200`
     : `http://localhost:8111/png/card/200`;
 
-  imgCard.addEventListener("click", () => {
-    gameEngine.updateCard(card.id, card =>
-      Object.assign({}, card, {
-        flipped: !card.flipped
-      })
-    );
-  });
+  if (card.checked) {
+    imgCard.classList.add("card-checked");
+  } else if (!gameState.waiting) {
+    imgCard.addEventListener("click", () => {
+      gameEngine.updateCard(card, gameState);
+    });
+  }
   return imgCard;
 };
 
-export const renderNeededElements = (
-  { cards },
-  cardsBeforeUpdate,
-  gameEngine
-) => {
-  cards.forEach((card, index) => {
-    // Since we don't mutate the card object, we don't have to do a shallow compare, comparing
-    // the references is enough. Yay for immutability
-    if (cards[index] !== cardsBeforeUpdate[index]) {
-      console.log("updating index", index);
-      document
-        .getElementById(generateId(card.id))
-        .replaceWith(createCardElement(card, gameEngine));
-    }
+export const renderElements = (gameState, gameEngine) => {
+  gameState.cardList.forEach((cardId, index) => {
+    const card = gameState.cardMap.get(cardId);
+    document
+      .getElementById(generateId(card.id))
+      .replaceWith(createCardElement(card, gameEngine, gameState));
   });
 };
 
 export const boot = (gameState, gameEngine) => {
   const root = document.getElementById("root");
-  console.log(gameState);
 
-  gameState.cards.forEach(card => {
-    const imgCard = createCardElement(card, gameEngine);
+  gameState.cardList.forEach(card => {
+    const imgCard = createCardElement(
+      gameState.cardMap.get(card),
+      gameEngine,
+      gameState
+    );
 
     root.append(imgCard);
   });
