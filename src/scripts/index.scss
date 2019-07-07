@@ -1,0 +1,10 @@
+body {
+  background-color: #123;
+}
+
+.card {
+  cursor: pointer;
+  &-back {
+    opacity: 0.5;
+  }
+}
