@@ -26,10 +26,16 @@ export const renderElements = (gameState, gameEngine) => {
       .getElementById(generateId(card.id))
       .replaceWith(createCardElement(card, gameEngine, gameState));
   });
+  setCounter(gameState);
+};
+
+const setCounter = gameState => {
+  document.getElementById("counter").innerHTML = gameState.tries;
 };
 
 export const boot = (gameState, gameEngine) => {
   const root = document.getElementById("root");
+  root.innerHTML = "";
 
   gameState.cardList.forEach(card => {
     const imgCard = createCardElement(
@@ -37,6 +43,7 @@ export const boot = (gameState, gameEngine) => {
       gameEngine,
       gameState
     );
+    setCounter(gameState);
 
     root.append(imgCard);
   });
